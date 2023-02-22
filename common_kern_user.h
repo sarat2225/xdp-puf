@@ -18,4 +18,5 @@ struct UAV_CR_DB {
 struct crPair crp[CRP_PER_IOT];
 };
 
+
 #endif /* __COMMON_KERN_USER_H */

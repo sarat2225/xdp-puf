@@ -96,7 +96,7 @@ static void init_CR_pairs(int map_fd, __u32 map_type)
 
   	for (int i = 0; i < no_of_IOT; i++)
   	{
-  		struct UAV_CR_DB uav_cr;
+  		struct crPair uav_cr;
   		
     		for(int j = 0; j < CRP_PER_IOT; j++)
        		{
@@ -104,10 +104,10 @@ static void init_CR_pairs(int map_fd, __u32 map_type)
 			c2 = c2+4;
 			r1 = r1+4;
 			r2 = r2+4;
-			uav_cr.crp[j].ch1 = c1;
-			uav_cr.crp[j].ch2 = c2;
-			uav_cr.crp[j].resp1 = r1;
-			uav_cr.crp[j].resp2 = r2;
+			uav_cr.ch1 = c1;
+			uav_cr.ch2 = c2;
+			uav_cr.resp1 = r1;
+			uav_cr.resp2 = r2;
        		}
        		if(bpf_map_update_elem(map_fd,&i,&uav_cr,BPF_ANY) != 0)
        		{
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 
 	/* Lesson#4: check map info, e.g. datarec is expected size */
 	map_expect.key_size    = sizeof(__u32);
-	map_expect.value_size  = sizeof(struct UAV_CR_DB);
+	map_expect.value_size  = sizeof(struct crPair);
 	map_expect.max_entries = no_of_IOT;
 	err = __check_map_fd_info(stats_map_fd, &info, &map_expect);
 	if (err) {
@@ -223,14 +223,19 @@ int main(int argc, char **argv)
 		return err;
 	}
 	if (verbose) {
-		printf("\nCollecting stats from BPF map\n");
+		printf("\nCollecting stats from BPF cr db map\n");
 		printf(" - BPF map (bpf_map_type:%d) id:%d name:%s"
 		       " key_size:%d value_size:%d max_entries:%d\n",
 		       info.type, info.id, info.name,
 		       info.key_size, info.value_size, info.max_entries
 		       );
 	}
-
+	
+	
+	
 	init_CR_pairs(stats_map_fd, info.type);
+	
+	
+	
 	return EXIT_OK;
 }
